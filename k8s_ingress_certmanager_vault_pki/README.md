@@ -11,8 +11,8 @@
 [Docker](https://www.docker.com) - Help developers and development teams build and ship apps<br/>
 [consul-emplate](https://github.com/hashicorp/consul-template) - The daemon consul-template queries a Consul or Vault cluster and updates any number of specified templates on the file system. As an added bonus, it can optionally run arbitrary commands when the update process completes
 
-
-### Warning: There some k8s apis, vault, cert-manager versions can not be support for your exist environment,Approle role id is not supported as k8s secret in cert-manager issuer api.
+### Warning 
+There some k8s apis, vault, cert-manager versions may not be supported for your exist environment.Approle role id is not supported as k8s secret in cert-manager issuer api.
 
 ## Start Kind k8s cluster
 ``` 
