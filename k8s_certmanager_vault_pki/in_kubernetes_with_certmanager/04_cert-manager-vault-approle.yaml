@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  name: cert-manager-vault-approle
+data:
+  secretId: Njk3MjgyNWQtYmU2Mi1iODcxLWQ2ZjEtMGMyNDJhZmMwOGEx

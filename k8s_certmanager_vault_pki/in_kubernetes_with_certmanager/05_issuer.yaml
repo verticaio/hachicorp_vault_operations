@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  name: vault-issuer
+spec:
+  vault:
+    path: pki_int/sign/example-dot-com 
+    server: http://192.168.0.103   # http yazmayanda ishlemir seni qaliq
+    auth:
+      appRole:
+        path: approle
+        roleId: "a78a5b07-a0f7-3465-081c-9e37ddb589e8" ### your role-id
+        secretRef:
+          name: cert-manager-vault-approle
+          key: secretId

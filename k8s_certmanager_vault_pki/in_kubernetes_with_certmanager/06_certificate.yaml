@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: foo
+spec:
+  secretName: foo-tls ### should be the same as in ingress manifest
+  issuerRef:
+    name: vault-issuer
+  commonName: babak.example.com
+  dnsNames:
+  - babak.example.com
