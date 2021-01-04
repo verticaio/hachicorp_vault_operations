@@ -2,14 +2,14 @@
 
 ## What we want to achieve
 
-## Design Consideration 
 
 ## Tools I use for demo purposes:
 [Kind](https://kind.sigs.k8s.io) - tool for running local Kubernetes clusters using Docker container “nodes”.<br/>
 [Cert-Manager](https://cert-manager.io/docs/) -  native Kubernetes certificate management controller<br/>
 [Vault](https://www.vaultproject.io) - Secure, store and tightly control access to tokens, passwords, certificates, encryption keys for protecting secrets and other sensitive data using a UI, CLI, or HTTP API<br/>
 [Docker](https://www.docker.com) - Help developers and development teams build and ship apps<br/>
-[consul-emplate](https://github.com/hashicorp/consul-template) - The daemon consul-template queries a Consul or Vault cluster and updates any number of specified templates on the file system. As an added bonus, it can optionally run arbitrary commands when the update process completes
+[consul-emplate](https://github.com/hashicorp/consul-template) - The daemon consul-template queries a Consul or Vault cluster and updates any number of specified templates on the file system. As an added bonus, it can optionally run arbitrary commands when the update process completes<br/>
+[jq](https://stedolan.github.io/jq/) - is a lightweight and flexible command-line JSON processor
 
 ### Warning 
 There some k8s apis, vault, cert-manager versions may not be supported for your exist environment.Approle role id is not supported as k8s secret in cert-manager issuer api.
@@ -17,24 +17,156 @@ There some k8s apis, vault, cert-manager versions may not be supported for your 
 ## Start Kind k8s cluster
 ``` 
 kind create cluster
+
 kubectl cluster-info --context kind-kind
+
 alias kubectl='kubectl  --context kind-kind'
-kubectl create ns  ingress-nginx
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
-kubectl wait --namespace ingress-nginx --for=condition=ready pod   --selector=app.kubernetes.io/component=controller  --timeout=90s
+
+kubectl get nodes
+NAME                 STATUS   ROLES    AGE   VERSION
+kind-control-plane   Ready    master   62s   v1.19.1
 ```
 
-## Start Vault, Enable pki engine and approle authentication mechanism
+## Start Vault, Enable PKI Engine/Approle authentication mechanism, Generate Sample Certificate and Test Out Some PKI Commands
+All detailed steps were defined  in script file as comment. Root CA - For the purpose of this demo, we’ll generate our own Root Certificate Authority within Vault. In a production environment, you should use an external Root CA to sign the intermediate CA that Vault will use to generate certificates
 ``` 
-Root CA - For the purpose of this demo, we’ll generate our own Root Certificate Authority within Vault. In a production environment, you should use an external Root CA to sign the intermediate CA that Vault will use to generate certificates
+cd  vault/
 
+# Start Vault
+./01_step.sh 
 
-Now that we have our Root CA ready, we can enable and configure an Intermediate CA authority on a different path. Everything relates to a PATH within Vault, so here we enable the same secret engine with a different configuration at a different PATH
+#  Enable Root CA and Intermediate CA(example.com)
+./02_step.sh
+
+# Create Role, Policy and Approle Auth for Intermediate CA
+./03_step.sh
+
+# Generate Example Certificate(test.example.com). You can see these certificates in certs directory
+./04_step.sh
+
+# List Generated certficate
+ls ./certs/
+test.example.key  test.example.pem
+
+# Read Generated certificate
+openssl x509 -in certs/test.example.pem -text  -noout | head -11
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            7a:7a:a2:5d:1c:98:97:38:b0:a2:36:00:b0:33:7a:67:02:93:2f:0a
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = example.com Intermediate Authority
+        Validity
+            Not Before: Jan  4 00:10:08 2021 GMT
+            Not After : Feb  3 00:10:37 2021 GMT
+        Subject: CN = test.example.com
+
+# Vault list, read, revoke , delete certificate  commands
+./05_step.sh
+
+# Destroy Vault Files
+./06_step.sh
 ```
+Keep role and secret id for k8s certmanager authentication to vault pki_int
 
-## Install Nginx Ingress, Cert-Manager and Sample-app which enabled https 
+## Install Nginx Ingress, Cert-Manager, Cert-Manager Issuer/Certificate manifest files and  Sample-app which enabled ingress https endpoint
 ``` 
+cd ../in_kubernetes_with_certmanager/
+
+# Install Nginx Ingress
+$ kubectl apply -f 01_nginx-ingress.yaml 
+
+$ kubectl wait --namespace ingress-nginx --for=condition=ready pod   --selector=app.kubernetes.io/component=controller  --timeout=90s
+pod/ingress-nginx-controller-79b66c4847-q2zcb condition met
+
+# Install Cert-Manager
+$ kubectl apply -f 02_cert-manager.yaml
+
+$ kubectl get pods  -n cert-manager
+NAME                                      READY   STATUS    RESTARTS   AGE
+cert-manager-cainjector-fc6c787db-cmmfp   1/1     Running   0          51s
+cert-manager-d994d94d7-ljtnp              1/1     Running   0          51s
+cert-manager-webhook-845d9df8bf-tsqnc     1/1     Running   0          51s
+
+# Change output of below command in  03_cert-manager-vault-approle.yaml file and then apply to k8s. 
+$ echo -n  $(cat ../vault/secret_id) | base64
+$ kubectl apply -f 03_cert-manager-vault-approle.yaml 
+
+# Change roleid in and Vault endpoint url  04_issuer.yaml file and then apply to k8s. This is used by Cert-Manager Issuer Api in which  authenticate to Vault
+$ cat ../vault/role_id
+$ kubectl apply -f  04_issuer.yaml
+
+# Check Issuer works as expected. If Ready Column is false then you can use describe command for troubleshooting
+$ kubectl get issuer                                 
+NAME           READY   AGE
+vault-issuer   True    86s
+
+# Apply 05_certificate.yaml file for getting certificate(intermediate ca pem, public and private key for babak.example.com )from Vault and it will create  automatically secret for Ingress Rule
+$ kubectl apply -f 05_certificate.yaml 
+certificate.cert-manager.io/foo created
+
+$ kubectl get Certificate       
+NAME   READY   SECRET    AGE
+foo    True    foo-tls   13s
+
+# Excellent! We see foo-tls secret for ingress rule
+$ kubectl get secret | grep foo-tls
+foo-tls                      kubernetes.io/tls                     3      51s
+
+# You can see content of certificate as below, Intermediate CA from Issued Root CA
+$ kubectl get secret  grep foo-tls -o yaml | grep ca.crt: |  awk '{print $2}' | head -1 | base64 -d | openssl x509 -in /dev/stdin -text -noout | head -11
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            18:2e:be:f3:6c:4a:ac:b3:8c:61:af:ed:07:51:68:de:88:67:23:ad
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = example.com Root Authority
+        Validity
+            Not Before: Jan  4 00:08:38 2021 GMT
+            Not After : Jan  3 00:09:08 2026 GMT
+        Subject: CN = example.com Intermediate Authority
+
+# Client Certificate from Issued Itermediate CA
+$ kubectl get secret  grep foo-tls -o yaml | grep tls.crt: | awk '{print $2}' | head -1 | base64 -d | openssl x509 -in /dev/stdin -text -noout | head -11 
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            73:0f:c9:19:e2:d1:f9:1d:85:e5:7d:83:19:0f:56:e1:fa:c5:66:02
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = example.com Intermediate Authority
+        Validity
+            Not Before: Jan  4 00:59:21 2021 GMT
+            Not After : Feb  3 00:59:51 2021 GMT
+        Subject: CN = babak.example.com
+
+# Apply Sample-app which enabled ingress https endpoint
+$ kubectl apply -f 06_sample-app.yaml 
+pod/foo-app created
+service/foo-service created
+ingress.networking.k8s.io/example-ingress created
+
+$ kubectl get pods 
+NAME      READY   STATUS    RESTARTS   AGE
+foo-app   1/1     Running   0          26s
+
+# You will se https endpoint(443) enabled automatically without errors
+$  kubectl get ing 
+NAME              CLASS    HOSTS               ADDRESS   PORTS     AGE
+example-ingress   <none>   babak.example.com             80, 443   32s
 ``` 
+
+### Result
+![Screenshot](Image.jpeg)
+
+
+
+Have Fun :blush: :relaxed:
+
+
+
 
 ## References:
 [What is PKI](https://securityboulevard.com/2020/02/what-is-pki-a-crash-course-on-public-key-infrastructure-pki/)<br/>

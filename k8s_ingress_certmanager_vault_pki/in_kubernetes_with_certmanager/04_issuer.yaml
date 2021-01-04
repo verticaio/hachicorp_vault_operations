@@ -5,11 +5,11 @@ metadata:
 spec:
   vault:
     path: pki_int/sign/example-dot-com 
-    server: http://192.168.0.103   # http yazmayanda ishlemir seni qaliq
+    server: http://192.168.0.105   # You have to write here http or https word in front of ip or hostname,maybe It is bug)) 
     auth:
       appRole:
         path: approle
-        roleId: "a78a5b07-a0f7-3465-081c-9e37ddb589e8" ### your role-id
+        roleId: "8f6b498e-2c29-e9db-044c-b72e5393f047" ### your role-id
         secretRef:
           name: cert-manager-vault-approle
           key: secretId

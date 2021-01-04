@@ -4,4 +4,4 @@ type: Opaque
 metadata:
   name: cert-manager-vault-approle
 data:
-  secretId: Njk3MjgyNWQtYmU2Mi1iODcxLWQ2ZjEtMGMyNDJhZmMwOGEx
+  secretId: OTk3ZmRhZjgtOTUxNS0xYTkyLTNhMmItNGJjYTNlODE5NjNj
