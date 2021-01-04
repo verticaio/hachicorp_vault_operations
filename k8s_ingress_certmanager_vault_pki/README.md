@@ -13,7 +13,7 @@
 [Curl](https://curl.se/) - command line tool and library for transferring data with URLs
 
 ## Warning 
-There some k8s apis, vault, cert-manager versions may not be supported for your exist environment. Approle role id is not supported as k8s secret in cert-manager issuer api.
+There some k8s apis, vault, cert-manager versions may not be supported for your exist environment. It depends on your k8s enviroment. Approle role id is not supported yet as k8s secret in cert-manager issuer api.
 
 ## Start Kind k8s cluster
 ``` 
@@ -21,7 +21,7 @@ $ kind create cluster
 
 $ kubectl cluster-info --context kind-kind
 
-$  kubectl='kubectl  --context kind-kind'
+$ kubectl='kubectl  --context kind-kind'
 
 $ kubectl get nodes
 NAME                 STATUS   ROLES    AGE   VERSION
@@ -69,7 +69,7 @@ $ ./05_step.sh
 # Destroy Vault Files
 $ ./06_step.sh
 ```
-Keep role and secret id for k8s certmanager authenticate to vault pki_int
+Keep in mind role and secret id for k8s certmanager authenticate to vault pki_int
 
 ## Install Nginx Ingress, Cert-Manager, Cert-Manager Issuer/Certificate manifest files and  Sample-app which enabled ingress https endpoint
 ``` 
@@ -165,6 +165,8 @@ Vault Side
 
 Client Side
 ![Screenshot](https_endpoint.jpeg)
+
+It is prepared for demo purposes. In Production environment you can use helm package manager for k8s deployments and deploy issuer's as based on project(namespace) and also can use helm sops for encrypt role_id in VSC.
 
 ##  Have Fun :blush: :relaxed:
 
