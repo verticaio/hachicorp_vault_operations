@@ -1,6 +1,8 @@
 # Kubernetes Ingress SSL/TLS Automation for Apps - PKI as a Service with Vault and Cert Manager
 
 ## What we want to achieve
+PKI Production Architecture  
+![Screenshot](./images/vault_pki_production_arch.jpeg) 
 
 
 ## Tools I use for demo purposes:
@@ -160,7 +162,6 @@ example-ingress   <none>   babak.example.com             80, 443   32s
 ``` 
 
 ## Result
-![alt-text-1](./images/vault_intermediate_role.png "Vault Side") ![alt-text-2](./images/https_endpoint.jpeg "Client Side")
 Vault Side
 ![Screenshot](./images/vault_intermediate_role.png) 
 
