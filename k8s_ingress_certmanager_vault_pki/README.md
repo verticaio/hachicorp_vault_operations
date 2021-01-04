@@ -159,15 +159,14 @@ NAME              CLASS    HOSTS               ADDRESS   PORTS     AGE
 example-ingress   <none>   babak.example.com             80, 443   32s
 ``` 
 
-### Result
-![Screenshot](vault_intermediate_role.png) ![Screenshot](https_endpoint.jpeg)
+## Result
+Vault Side
+![Screenshot](vault_intermediate_role.png) 
 
-
+Client Side
+![Screenshot](https_endpoint.jpeg)
 
 ##  Have Fun :blush: :relaxed:
-
-
-
 
 ## References:
 [What is PKI](https://securityboulevard.com/2020/02/what-is-pki-a-crash-course-on-public-key-infrastructure-pki/)<br/>
