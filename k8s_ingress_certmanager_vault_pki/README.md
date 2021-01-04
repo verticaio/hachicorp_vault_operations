@@ -9,20 +9,21 @@
 [Vault](https://www.vaultproject.io) - Secure, store and tightly control access to tokens, passwords, certificates, encryption keys for protecting secrets and other sensitive data using a UI, CLI, or HTTP API<br/>
 [Docker](https://www.docker.com) - Help developers and development teams build and ship apps<br/>
 [consul-emplate](https://github.com/hashicorp/consul-template) - The daemon consul-template queries a Consul or Vault cluster and updates any number of specified templates on the file system. As an added bonus, it can optionally run arbitrary commands when the update process completes<br/>
-[jq](https://stedolan.github.io/jq/) - is a lightweight and flexible command-line JSON processor
+[JQ](https://stedolan.github.io/jq/) - is a lightweight and flexible command-line JSON processor<br/>
+[CURL](https://curl.se/) - command line tool and library for transferring data with URLs
 
-### Warning 
-There some k8s apis, vault, cert-manager versions may not be supported for your exist environment.Approle role id is not supported as k8s secret in cert-manager issuer api.
+## Warning 
+There some k8s apis, vault, cert-manager versions may not be supported for your exist environment. Approle role id is not supported as k8s secret in cert-manager issuer api.
 
 ## Start Kind k8s cluster
 ``` 
-kind create cluster
+$ kind create cluster
 
-kubectl cluster-info --context kind-kind
+$ kubectl cluster-info --context kind-kind
 
-alias kubectl='kubectl  --context kind-kind'
+$  kubectl='kubectl  --context kind-kind'
 
-kubectl get nodes
+$ kubectl get nodes
 NAME                 STATUS   ROLES    AGE   VERSION
 kind-control-plane   Ready    master   62s   v1.19.1
 ```
@@ -30,26 +31,26 @@ kind-control-plane   Ready    master   62s   v1.19.1
 ## Start Vault, Enable PKI Engine/Approle authentication mechanism, Generate Sample Certificate and Test Out Some PKI Commands
 All detailed steps were defined  in script file as comment. Root CA - For the purpose of this demo, we’ll generate our own Root Certificate Authority within Vault. In a production environment, you should use an external Root CA to sign the intermediate CA that Vault will use to generate certificates
 ``` 
-cd  vault/
+$ cd  vault/
 
 # Start Vault
-./01_step.sh 
+$ ./01_step.sh 
 
 #  Enable Root CA and Intermediate CA(example.com)
-./02_step.sh
+$ ./02_step.sh
 
 # Create Role, Policy and Approle Auth for Intermediate CA
-./03_step.sh
+$ ./03_step.sh
 
 # Generate Example Certificate(test.example.com). You can see these certificates in certs directory
-./04_step.sh
+$ ./04_step.sh
 
 # List Generated certficate
-ls ./certs/
+$ ls ./certs/
 test.example.key  test.example.pem
 
 # Read Generated certificate
-openssl x509 -in certs/test.example.pem -text  -noout | head -11
+$ openssl x509 -in certs/test.example.pem -text  -noout | head -11
 Certificate:
     Data:
         Version: 3 (0x2)
@@ -63,10 +64,10 @@ Certificate:
         Subject: CN = test.example.com
 
 # Vault list, read, revoke , delete certificate  commands
-./05_step.sh
+$ ./05_step.sh
 
 # Destroy Vault Files
-./06_step.sh
+$ ./06_step.sh
 ```
 Keep role and secret id for k8s certmanager authentication to vault pki_int
 
@@ -159,7 +160,8 @@ example-ingress   <none>   babak.example.com             80, 443   32s
 ``` 
 
 ### Result
-![Screenshot](Image.jpeg)
+![Screenshot](vault_intermediate_role.png)
+![Screenshot](https_endpoint.jpeg)
 
 
 
