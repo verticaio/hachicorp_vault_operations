@@ -3,7 +3,7 @@
 ## What we want to achieve
                                                     PKI Production Architecture  
 ![Screenshot](./images/vault_pki_production_arch.jpeg) 
-
+For understanding this github repo every individual needs to know certificates, pki architecture, docker, kubernetes, ingress-nginx,cert-manager, vault pki, vault approle auth  and bash scripting
 
 ## Tools I use for demo purposes:
 [Kind](https://kind.sigs.k8s.io) - tool for running local Kubernetes clusters using Docker container “nodes”.<br/>
