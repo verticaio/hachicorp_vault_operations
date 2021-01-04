@@ -4,15 +4,19 @@
                                                     PKI Production Architecture  
 ![Screenshot](./images/vault_pki_prod_arch.jpeg) 
 
-For understanding this github repo every individual needs to know certificates, pki architecture, docker, kubernetes, ingress-nginx, cert-manager, vault pki-engine, vault approle auth  and bash scripting. It is prepared for demo purposes. In Production environment you should use helm package manager for k8s deployments and also can use helm sops/git-secret for encrypt role_id in VSC. Other important case that you should consider an external Root CA to sign the intermediate CA. It is recommended solution from security perspective.<br/>
+For understanding this github repo every individual needs to know about certificates, pki architecture, docker, kubernetes, ingress-nginx, cert-manager, vault pki-engine, vault approle auth  and bash scripting. It is prepared for demo purposes. In Production environment you should use helm package manager for k8s deployments and also can use helm sops/git-secret for encrypt role_id in VSC. Other important case that you should consider an external Root CA to sign the intermediate CA. It is recommended solution from security perspective.<br/>
 
-First of all, let's talk about why this structure is needed. Every day We launch new services and we have to  make sure that the connections between these services are safe. In big corporate environment, some of the certificate operations are following.<br/>
+First of all, let's talk about why this structure is needed. Every day We launch new services and we have to  make sure that the connections between these services are safe. In a large company, some of the certificate operations are following.<br/>
 * Website Security (HTTPS/SSL)
 * Secure Shell Protocol (SSH) 
 * Service-Service Communication
 * Email Security (S/MIMEProtocol)
 * Secure Messaging
-* Document Signing  and etc
+* Document Signing  and etc <br/>
+
+If you work as a devops/sysadmin/InfoSec engineer in a large company, then your job will be  more difficult for maintenance these operations. For example, issue new certificates, renew expire certicates, revoke some certificates, auditing and specially every time you receive the certificate from another department by mail/task and it has to be approved by your manager. It is tedious task and leads to a big waste of time, suddenly stop of production service(usually certificate expire date) and big security issues. Another big issue  how to renew hundred of certificates when they expire at them same time.  Of course, you can use a wildcard certificate or create a 100-year self-signed certificate for each service, but this is not recommended by the security side. I did my research to solve these types of problems and decided to prepare this repo. I have placed references in the end of readme that I mentioned above. There have a detailed guide about every component. In addition, I would like to point out that PKI itself is a very deep topic and I am not a PKI expert. If you have any comments, please write to me. <br/>
+I hope, It will be useful for you :blush:
+
 
 ## Tools I use for demo purposes:
 [Kind](https://kind.sigs.k8s.io) - tool for running local Kubernetes clusters using Docker container “nodes”.<br/>
