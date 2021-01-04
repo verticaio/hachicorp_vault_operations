@@ -1,7 +1,7 @@
 # Kubernetes Ingress SSL/TLS Automation for Apps - PKI as a Service with Vault and Cert Manager
 
 ## What we want to achieve
-                           PKI Production Architecture  
+                                     PKI Production Architecture  
 ![Screenshot](./images/vault_pki_production_arch.jpeg) 
 
 
