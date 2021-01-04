@@ -160,13 +160,14 @@ example-ingress   <none>   babak.example.com             80, 443   32s
 ``` 
 
 ## Result
+![alt-text-1](./images/vault_intermediate_role.png "Vault Side") ![alt-text-2](./images/https_endpoint.jpeg "Client Side")
 Vault Side
-![Screenshot](vault_intermediate_role.png) 
+![Screenshot](./images/vault_intermediate_role.png) 
 
 Client Side
-![Screenshot](https_endpoint.jpeg)
+![Screenshot](./images/https_endpoint.jpeg)
 
-It is prepared for demo purposes. In Production environment you can use helm package manager for k8s deployments and deploy issuer's as based on project(namespace) and also can use helm sops for encrypt role_id in VSC.
+It is prepared for demo purposes. In Production environment you can use helm package manager for k8s deployments and deploy issuer's as based on project(namespace) and also can use helm sops/git-secret for encrypt role_id in VSC.
 
 ##  Have Fun :blush: :relaxed:
 
