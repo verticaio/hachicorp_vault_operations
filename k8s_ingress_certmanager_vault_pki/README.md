@@ -3,6 +3,7 @@
 ## What we want to achieve
                                                     PKI Production Architecture  
 ![Screenshot](./images/vault_pki_prod_arch.jpeg) 
+
 For understanding this github repo every individual needs to know certificates, pki architecture, docker, kubernetes, ingress-nginx, cert-manager, vault pki-engine, vault approle auth  and bash scripting. It is prepared for demo purposes. In Production environment you should use helm package manager for k8s deployments and also can use helm sops/git-secret for encrypt role_id in VSC. Other important case that you should consider an external Root CA to sign the intermediate CA. It is recommended solution from security perspective.
 
 ## Tools I use for demo purposes:
