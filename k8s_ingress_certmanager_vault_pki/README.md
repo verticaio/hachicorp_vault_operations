@@ -160,9 +160,7 @@ example-ingress   <none>   babak.example.com             80, 443   32s
 ``` 
 
 ### Result
-![Screenshot](vault_intermediate_role.png)
-
-![Screenshot](https_endpoint.jpeg)
+![Screenshot](vault_intermediate_role.png) ![Screenshot](https_endpoint.jpeg)
 
 
 
