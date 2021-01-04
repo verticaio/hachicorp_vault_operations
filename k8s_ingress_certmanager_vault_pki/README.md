@@ -131,7 +131,7 @@ $ kubectl get secret | grep foo-tls
 foo-tls                      kubernetes.io/tls                     3      51s
 
 # You can see content of certificate as below, Intermediate CA from Issued Root CA
-$ kubectl get secret  grep foo-tls -o yaml | grep ca.crt: |  awk '{print $2}' | head -1 | base64 -d | openssl x509 -in /dev/stdin -text -noout | head -11
+$ kubectl get secret foo-tls -o yaml | grep ca.crt: |  awk '{print $2}' | head -1 | base64 -d | openssl x509 -in /dev/stdin -text -noout | head -11
 Certificate:
     Data:
         Version: 3 (0x2)
@@ -145,7 +145,7 @@ Certificate:
         Subject: CN = example.com Intermediate Authority
 
 # Client Certificate from Issued Itermediate CA
-$ kubectl get secret  grep foo-tls -o yaml | grep tls.crt: | awk '{print $2}' | head -1 | base64 -d | openssl x509 -in /dev/stdin -text -noout | head -11 
+$ kubectl get secret  foo-tls -o yaml | grep tls.crt: | awk '{print $2}' | head -1 | base64 -d | openssl x509 -in /dev/stdin -text -noout | head -11 
 Certificate:
     Data:
         Version: 3 (0x2)
