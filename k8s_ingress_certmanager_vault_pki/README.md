@@ -69,7 +69,7 @@ $ ./05_step.sh
 # Destroy Vault Files
 $ ./06_step.sh
 ```
-Keep role and secret id for k8s certmanager authentication to vault pki_int
+Keep role and secret id for k8s certmanager authenticate to vault pki_int
 
 ## Install Nginx Ingress, Cert-Manager, Cert-Manager Issuer/Certificate manifest files and  Sample-app which enabled ingress https endpoint
 ``` 
